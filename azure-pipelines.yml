@@ -1,0 +1,33 @@
+name: Dotnet-cicd-test
+trigger:
+- master
+pool:
+ vmImage:'ubantu-latest'
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+  displayName: 'restore'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--no-restore'
+  displayName: 'Build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**/*test.csproj'
+    arguments: '--no-restore'
+  displayName: 'Test'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '**/*Customapi.csproj'
+    arguments: '--configurations $(buildConfiguration) --no-restore'
+    zipAfterPublish: true
+
+
+
